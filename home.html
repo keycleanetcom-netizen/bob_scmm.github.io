@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strayfe.de | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #020617; color: white; font-family: 'Inter', sans-serif; margin: 0; }
+        .glass-nav { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(56, 189, 248, 0.1); }
+        .gradient-text { background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Dropdown & Modal */
+        #profileDropdown { display: none; }
+        #profileDropdown.show { display: block; }
+        #profileModal { display: none; }
+        #profileModal.show { display: flex; }
+    </style>
+</head>
+<body>
+
+    <nav class="glass-nav sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="text-2xl font-black tracking-tighter italic">
+            STRAYFE<span class="text-sky-500">.DE</span>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <span class="text-sm text-slate-400 hidden sm:inline text-right">Willkommen!<br><span class="text-[10px] text-slate-500">Online</span></span>
+            
+            <div class="relative">
+                <button onclick="toggleDropdown()" id="profileBtn" class="focus:outline-none">
+                    <div id="profileImageNav" class="w-12 h-12 rounded-full bg-sky-500 border-2 border-sky-400/30 flex items-center justify-center font-bold shadow-lg overflow-hidden">
+                        <span id="navInitials" class="text-white text-lg">U</span>
+                    </div>
+                </button>
+
+                <div id="profileDropdown" class="absolute right-0 mt-3 w-56 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-[60]">
+                    <div class="p-4 border-b border-slate-800">
+                        <p class="text-xs text-slate-500 uppercase font-bold">Account</p>
+                    </div>
+                    <button onclick="openModal()" class="w-full text-left px-5 py-4 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center gap-3">
+                        <span>⚙️</span> Profil anpassen
+                    </button>
+                    <a href="index.html" class="block px-5 py-4 text-sm text-red-400 hover:bg-red-500/10 transition border-t border-slate-800 flex items-center gap-3">
+                        <span>🚪</span> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="profileModal" class="fixed inset-0 z-[100] items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] w-full max-w-sm shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white text-xl">✕</button>
+            
+            <h3 class="text-2xl font-bold mb-6 text-center">Profil <span class="text-sky-500">Editor</span></h3>
+            
+            <div class="space-y-6 text-center">
+                <div class="flex justify-center">
+                    <div id="previewContainer" class="w-32 h-32 rounded-full bg-slate-950 border-2 border-dashed border-sky-500/30 flex items-center justify-center overflow-hidden">
+                        <span class="text-slate-600 text-xs">Vorschau</span>
+                    </div>
+                </div>
+
+                <div>
+                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+                    <button onclick="document.getElementById('imageInput').click()" class="bg-slate-800 hover:bg-slate-700 text-white text-sm px-6 py-4 rounded-2xl transition w-full border border-slate-700 font-bold">
+                        BILD WÄHLEN
+                    </button>
+                </div>
+
+                <button onclick="saveProfile()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-4 rounded-2xl transition shadow-lg shadow-sky-500/20">
+                    ÜBERNEHMEN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <header class="max-w-7xl mx-auto px-6 py-20 text-center">
+        <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter">DEINE <span class="gradient-text italic">GAMING ZONE</span>.</h1>
+        <p class="text-slate-400 text-xl max-w-2xl mx-auto">Verwalte dein Profil und checke deine Stats.</p>
+    </header>
+
+    <script>
+        function toggleDropdown() {
+            const dd = document.getElementById('profileDropdown');
+            dd.classList.toggle('show');
+        }
+
+        function openModal() {
+            document.getElementById('profileModal').classList.add('show');
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+
+        function closeModal() {
+            document.getElementById('profileModal').classList.remove('show');
+        }
+
+        // Bild-Handling
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const profileImageNav = document.getElementById('profileImageNav');
+
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function saveProfile() {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImageNav.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    closeModal();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Wähle erst ein Bild!");
+            }
+        }
+
+        // Schließen beim Klick außerhalb
+        window.onclick = function(event) {
+            if (!event.target.closest('#profileBtn') && !event.target.closest('#profileDropdown')) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
