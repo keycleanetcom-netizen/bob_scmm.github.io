@@ -3,70 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strayfe.de | Premium Dashboard</title>
+    <title>Bob Klicker | Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #020617; 
-            color: white; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0;
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.05) 0%, transparent 50%);
-            background-attachment: fixed;
+            background-color: #020617; color: white; font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-image: radial-gradient(circle at 50% -20%, rgba(56, 189, 248, 0.15), transparent 80%);
+            background-attachment: fixed; min-height: 100vh; margin: 0;
         }
-
-        .glass-nav { 
-            background: rgba(15, 23, 42, 0.6); 
-            backdrop-filter: blur(20px); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-        }
-
-        .gradient-text { 
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-
-        .stat-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-card:hover {
-            border-color: rgba(56, 189, 248, 0.4);
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
-            background: rgba(15, 23, 42, 0.6);
-        }
-
-        /* Dropdown & Modal Animationen */
-        #profileDropdown, #profileModal { display: none; opacity: 0; }
-        #profileDropdown.show { display: block; animation: slideIn 0.2s ease-out forwards; }
-        #profileModal.show { display: flex; animation: fadeIn 0.3s ease-out forwards; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; backdrop-filter: blur(0px); }
-            to { opacity: 1; backdrop-filter: blur(10px); }
-        }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .hidden { display: none !important; }
+        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; outline: none; }
+        .upgrade-scroll { max-height: 400px; overflow-y: auto; }
     </style>
 </head>
-<body class="custom-scrollbar">
+<body>
 
-    <nav class="glass-nav sticky top-0 z-50 px-8 py-5 flex items-center justify-between">
-        <div class="flex items-center gap-12">
+    <div id="authSection" class="flex items-center justify-center min-h-screen p-6">
+        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-md text-center shadow-2xl">
+            <h1 class="text-4xl font-black italic tracking-tighter mb-2 uppercase">Bob <span class="text-sky-500">Klicker</span></h1>
+            <p id="authTitle" class="text-slate-400 text-sm mb-8">Melde dich an, um zu klicken</p>
+
+            <div class="space-y-4">
+                <input type="text" id="username" placeholder="Benutzername" class="w-full p-4 rounded-2xl transition focus:border-sky-500">
+                <input type="password" id="password" placeholder="Passwort" class="w-full p-4 rounded-2xl transition focus:border-sky-500">
+                
+                <button id="mainAuthBtn" onclick="handleAuth()" class="w-full bg-sky-500 hover:bg-sky-400 p-4 rounded-2xl font-black transition shadow-lg shadow-sky-500/20 uppercase tracking-widest">
+                    Login
+                </button>
+                
+                <p class="text-xs text-slate-500 mt-4">
+                    <span id="toggleText">Noch keinen Account?</span> 
+                    <button onclick="toggleAuthMode()" id="toggleBtn" class="text-sky-400 font-bold hover:underline ml-1">Registrieren</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameSection" class="hidden">
+        <nav class="glass-card sticky top-0 z-50 px-8 py-4 flex items-center justify-between">
+            <div class="text-xl font-black italic uppercase">Bob <span class="text-sky-500">Klicker</span></div>
+            <div class="flex items-center gap-6">
+                <button onclick="openLeaderboard()" class="text-xs font-bold uppercase text-slate-400 hover:text-white transition">Leaderboard</button>
+                <button onclick="logout()" class="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">LOGOUT</button>
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto px-6 py-16 text-center">
+            <p id="pointDisplay" class="text-8xl font-black text-white mb-2">0</p>
+            <p class="text-sky-500 font-bold uppercase tracking-[0.5em] text-[10px] mb-16">Points</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="space-y-6">
+                    <div onclick="doClick()" class="glass-card p-20 rounded-[3rem] cursor-pointer active:scale-95 transition-transform flex flex-col items-center">
+                        <div class="w-24 h-24 bg-sky-500 rounded-full mb-6 flex items-center justify-center text-4xl shadow-xl shadow-sky-500/40">🧔</div>
+                        <span class="text-xl font-black italic tracking-widest">CLICK BOB!</span>
+                    </div>
+                    <div class="glass-card p-6 rounded-[2rem] flex justify-around text-sm font-bold">
+                        <div><span class="text-slate-500">KLICK:</span> <span id="cpcText">1</span></div>
+                        <div><span class="text-slate-500">SEKUNDE:</span> <span id="cpsText" class="text-sky-400">0</span></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-[3rem] text-left">
+                    <h2 class="text-xl font-black mb-6 italic text-sky-500">BOB-UPGRADES</h2>
+                    <div id="upgradeContainer" class="upgrade-scroll space-y-2 pr-2"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="leaderboardModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+        <div class="glass-card w-full max-w-lg rounded-[3rem] p-10 relative">
+            <button onclick="closeLeaderboard()" class="absolute top-6 right-8 text-2xl text-slate-500 hover:text-white">&times;</button>
+            <h2 class="text-3xl font-black italic mb-6 uppercase">Leaderboard</h2>
+            <div id="leaderboardList" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+        let currentUser = localStorage.getItem('currentUser');
+        let data = {};
+
+        const upgradesConfig = [
+            { id: 'u1', name: 'Bob-Training', desc: '+1 Klick', type: 'cpc', boost: 1, baseCost: 50 },
+            { id: 'u2', name: 'Bob-Helfer', desc: '+1 Sekunde', type: 'cps', boost: 1, baseCost: 200 },
+            { id: 'u3', name: 'Super-Bob', desc: '+10 Klick', type: 'cpc', boost: 10, baseCost: 2000 },
+            { id: 'u4', name: 'Bob-Fabrik', desc: '+25 Sekunde', type: 'cps', boost: 25, baseCost: 15000 },
+            { id: 'u5', name: 'Gott-Bob', desc: '+1000 Sekunde', type: 'cps', boost: 1000, baseCost: 500000 }
+        ];
+
+        // --- AUTH LOGIK ---
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('authTitle').innerText = isLoginMode ? "Melde dich an, um zu klicken" : "Erstelle einen neuen Bob-Account";
+            document.getElementById('mainAuthBtn').innerText = isLoginMode ? "Login" : "Registrieren";
+            document.getElementById('toggleBtn').innerText = isLoginMode ? "Registrieren" : "Anmelden";
+        }
+
+        function handleAuth() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            if (!user || !pass) return alert("Füll alles aus!");
+
+            let users = JSON.parse(localStorage.getItem('bobUsers')) || {};
+
+            if (isLoginMode) {
+                if (users[user] && users[user].password === pass) {
+                    localStorage.setItem('currentUser', user);
+                    checkLoginState();
+                } else { alert("Falsche Daten!"); }
+            } else {
+                if (users[user]) return alert("Name schon weg!");
+                users[user] = { password: pass, gameData: { points: 0, stats: {} } };
+                localStorage.setItem('bobUsers', JSON.stringify(users));
+                alert("Account erstellt! Jetzt einloggen.");
+                toggleAuthMode();
+            }
+        }
+
+        function checkLoginState() {
+            currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('gameSection').classList.remove('hidden');
+                loadGameData();
+            }
+        }
+
+        function logout() { localStorage.removeItem('currentUser'); location.reload(); }
+
+        // --- GAME LOGIK ---
+        function loadGameData() {
+            let users = JSON.parse(localStorage.getItem('bobUsers')) || {};
+            data = users[currentUser].gameData;
+            if(!data.stats) data.stats = {};
+            refresh();
+            renderUpgrades();
+        }
+
+        function save() {
+            let users = JSON.parse(localStorage.getItem('bobUsers')) || {};
+            users[currentUser].gameData = data;
+            localStorage.setItem('bobUsers', JSON.stringify(users));
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgradeContainer');
+            container.innerHTML = upgradesConfig.map(u => {
+                const count = data.stats[u.id] || 0;
+                const cost = Math.floor(u.baseCost * Math.pow(1.25, count));
+                return `
+                    <button onclick="buyUpgrade('${u.id}')" class="w-full flex justify-between items-center p-4 bg-white/5 rounded-2xl hover:bg-white/10 border border-white/5 transition">
+                        <div class="text-left"><p class="font-bold text-xs">${u.name} x${count}</p></div>
+                        <span class="text-sky-400 font-black text-xs">${cost.toLocaleString()}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function buyUpgrade(id) {
+            const u = upgradesConfig.find(x => x.id === id);
+            const count = data.stats[id] || 0;
+            const cost = Math.floor(u.baseCost * Math.pow(1.25, count));
+            if(data.points >= cost) {
+                data.points -= cost; data.stats[id] = count + 1;
+                save(); refresh(); renderUpgrades();
+            }
+        }
+
+        function refresh() {
+            let cpc = 1, cps = 0;
+            upgradesConfig.forEach(u => {
+                const c = data.stats[u.id] || 0;
+                if(u.type === 'cpc') cpc += (u.boost * c);
+                if(u.type === 'cps') cps += (u.boost * c);
+            });
+            document.getElementById('pointDisplay').innerText = Math.floor(data.points).toLocaleString();
+            document.getElementById('cpcText').innerText = cpc;
+            document.getElementById('cpsText').innerText = cps;
+            window.activeCps = cps;
+        }
+
+        function doClick() {
+            let cpc = 1;
+            upgradesConfig.forEach(u => { if(u.type === 'cpc') cpc += (u.boost * (data.stats[u.id] || 0)); });
+            data.points += cpc; save(); refresh();
+        }
+
+        // --- LEADERBOARD ---
+        function openLeaderboard() {
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+            const list = document.getElementById('leaderboardList');
+            const users = JSON.parse(localStorage.getItem('bobUsers')) || {};
+            let all = Object.keys(users).map(name => ({ name, points: users[name].gameData.points }))
+                        .sort((a,b) => b.points - a.points);
+            
+            list.innerHTML = all.map((u, i) => `
+                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <span>#${i+1} ${u.name}</span>
+                    <span class="font-black text-sky-400">${Math.floor(u.points).toLocaleString()}</span>
+                </div>
+            `).join('');
+        }
+        function closeLeaderboard() { document.getElementById('leaderboardModal').classList.add('hidden'); }
+
+        setInterval(() => { if(currentUser && window.activeCps > 0) { data.points += (window.activeCps / 10); save(); refresh(); } }, 100);
+        window.onload = checkLoginState;
+    </script>
+</body>
+</html>
             <div class="text-2xl font-black tracking-tighter italic">
                 STRAYFE<span class="text-sky-500">.DE</span>
             </div>
